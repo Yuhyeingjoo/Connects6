@@ -1,0 +1,4544 @@
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "ex.txt" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminatie
+ 
+
+  fclose (pFile);
+	printf("%d\n",Lsize);
+  FILE *wp;
+  wp = fopen("copy","wb");
+  fwrite(buffer,sizeof(char),,wp);
+  free (buffer);
+  fclose(wp);
+  return 0;
+
+	
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+Dπ¡œ8V#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+11
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+b0VIM 8.0hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "ex.txt" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminatie
+ 
+
+  fclose (pFile);
+	printf("%d\n",Lsize);
+  FILE *wp;
+  wp = fopen("copy","wb");
+  fwrite(buffer,sizeof(char),,wp);
+  free (buffer);
+  fclose(wp);
+  return 0;
+
+	
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+Dπ¡œ8V#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+11
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+b0VIM 8.0hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "ex.txt" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminatie
+ 
+
+  fclose (pFile);
+	printf("%d\n",Lsize);
+  FILE *wp;
+  wp = fopen("copy","wb");
+  fwrite(buffer,sizeof(char),,wp);
+  free (buffer);
+  fclose(wp);
+  return 0;
+
+	
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+Dπ¡œ8V#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	printf("write %s\n",path);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "ex.txt" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminatie
+ 
+
+  fclose (pFile);
+	printf("%d\n",Lsize);
+  FILE *wp;
+  wp = fopen("copy","wb");
+  fwrite(buffer,sizeof(char),,wp);
+  free (buffer);
+  fclose(wp);
+  return 0;
+
+	
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+Dπ¡œ8V#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+11
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+b0VIM 8.0hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "ex.txt" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminatie
+ 
+
+  fclose (pFile);
+	printf("%d\n",Lsize);
+  FILE *wp;
+  wp = fopen("copy","wb");
+  fwrite(buffer,sizeof(char),,wp);
+  free (buffer);
+  fclose(wp);
+  return 0;
+
+	
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+Dπ¡œ8V#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+11
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+b0VIM 8.0hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "ex.txt" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminatie
+ 
+
+  fclose (pFile);
+	printf("%d\n",Lsize);
+  FILE *wp;
+  wp = fopen("copy","wb");
+  fwrite(buffer,sizeof(char),,wp);
+  free (buffer);
+  fclose(wp);
+  return 0;
+
+	
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+Dπ¡œ8V#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
+b0VIM 8.011
+22
+3663
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+#include<sys/types.h>
+int main(){
+	FILE *p, *f; 
+	p=fopen("./dir.c","rb");
+	if(p==NULL)printf("File error.\n");
+	f= fopen("int.txt","wb");
+	char* arr;
+	fseek(p,0,SEEK_END);
+	int lSize= ftell(p);
+	arr = (char*) malloc(lSize);
+	rewind(p);
+	fread(arr,1,lSize,p);
+	fwrite(arr,1,lSize,f);
+
+	fclose(p);
+	fclose(f);
+	return 0;
+}
+b0VIM 8.0ll/ooowwwkk
+asdd3rrrrrrrrrrrrrrrrewf2
+werwerr
+ooowwwkk
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+	FILE * pFile;
+	long lSize;
+	char * buffer;
+	size_t result;
+
+	pFile = fopen ( "ex.txt" , "rb" );
+	if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+	fseek (pFile , 0 , SEEK_END);
+	lSize = ftell (pFile);
+	rewind (pFile);
+
+	buffer = (char*) malloc (sizeof(char)*lSize);
+	if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+	
+
+	FILE * wp;
+	wp= fopen("wr.txt","wb");
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread (buffer,1,5,pFile);
+		if (result != 5) {
+			printf("error:%ld    %ld\n",lSize, result);
+		}
+	
+	
+		fwrite(buffer,sizeof(char),result,wp);
+	}
+
+	FILE *fp;
+	fp = fopen("char.txt","rb");
+	fseek(fp,0,SEEK_END);
+	lSize = ftell(fp);
+	rewind(fp);
+
+	for(int i=0; i<lSize+5; i=i+5){
+		result = fread(buffer,1,5,fp);
+		fwrite(buffer,1,result,wp);
+	}
+
+
+ 	free (buffer);
+  	fclose (pFile);
+
+	fclose(wp);
+	return 0;
+}
+ELF#include<stdio.h>
+
+int main(){
+	FILE *fp;
+	int c[100];
+	fp = fopen("ex.txt","r");
+	int k = fread(c,sizeof(int),100,fp);
+	for(int i=0; i<100; i++){
+			
+		printf("%d\n",c[i]);
+	}
+}
+hhihihih12345
+uuu
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+char* read(char* path){
+	FILE *fp ;
+	char *data;
+	size_t result;
+	fp = 	fopen(path,"r");
+	if(fp==NULL) printf("File error\n");
+	fseek(fp,0,SEEK_END);
+	int lSize =ftell(fp);
+	rewind(fp);
+	data=(char*)malloc(sizeof(char)*lSize);
+	result = fread(data,1,lSize,fp);
+	if(result!=lSize)
+	fclose(fp);
+	printf("write %s\n",path);
+	return data;
+}
+
+void write(char* data){
+	FILE *wp;
+	wp = fopen("archive.txt","at+");
+	size_t length = strlen(data);
+	fwrite(data,1,length,wp);
+	fclose(wp);
+}
+void *
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char * path;
+
+    while (ep = readdir (dp)){
+
+            path=(char*)malloc(sizeof(char)*(strlen(filepath)+strlen(ep->d_name)+3));
+	    
+            strcpy(path,filepath);
+            strcat(path,ep->d_name);
+
+        if(ep->d_type == DT_DIR) {
+
+            if((strcmp(ep->d_name,".")==0)||(strcmp(ep->d_name,"..")==0)) continue;
+
+            //filepath = (char *)malloc(sizeof(char)*(strlen(path)+strlen(ep->d_name)));
+	    
+            printf("path = %s\n",path);
+	    read(path);
+	    puts(ep->d_name);
+            strcat(path,"/");
+            DIR *dps= opendir(path);
+		
+
+            search(dps,path);
+            free(path);
+        }
+	else{
+		char* else_path;
+		printf("path = %s\n",path);
+		write(read(path));
+	       	puts(ep->d_name);
+	}
+                
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+  char *filepath;
+
+  filepath="./";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        
+        search(dp,filepath);
+        
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+
+int main () {
+  FILE * pFile;
+  long lSize;
+  char * buffer;
+  size_t result;
+
+  pFile = fopen ( "ex.txt" , "rb" );
+  if (pFile==NULL) {fputs ("File error",stderr); exit (1);}
+
+  // obtain file size:
+  fseek (pFile , 0 , SEEK_END);
+  lSize = ftell (pFile);
+  rewind (pFile);
+
+  // allocate memory to contain the whole file:
+  buffer = (char*) malloc (sizeof(char)*lSize);
+  if (buffer == NULL) {fputs ("Memory error",stderr); exit (2);}
+
+  // copy the file into the buffer:
+  result = fread (buffer,1,lSize,pFile);
+  if (result != lSize) {fputs ("Reading error",stderr); exit (3);}
+
+  /* the whole file is now loaded in the memory buffer. */
+
+  // terminatie
+ 
+
+  fclose (pFile);
+	printf("%d\n",Lsize);
+  FILE *wp;
+  wp = fopen("copy","wb");
+  fwrite(buffer,sizeof(char),,wp);
+  free (buffer);
+  fclose(wp);
+  return 0;
+
+	
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+#include <stdio.h>
+#include <sys/types.h>
+#include <string.h>
+#include <dirent.h>
+#include <stdlib.h>
+
+void
+search(DIR *dp,char *filepath){
+
+    struct dirent *ep;
+    char path[64], next[64];
+
+    //printf("filepath =%s\n",filepath);
+
+    while (ep = readdir (dp)){
+
+        puts(ep->d_name);
+
+        if((ep->d_name[0]=='.')||(ep->d_name[1]=='.')) continue;
+
+        if(ep->d_type == DT_DIR) {
+	    strcpy(next,filepath);
+	    strcpy(path,"/");
+	    strcat(next,path);
+            strcat(next,ep->d_name);
+	    printf("sub: %s\n",next);
+            dp = opendir (next);
+            search(dp,next);
+        }
+
+    }
+}
+
+int
+main (void)
+{
+
+  DIR *dp;
+
+  char *filepath;
+
+  filepath=".";
+
+  dp = opendir(filepath);
+
+  printf("filepath =%s\n",filepath);
+
+  if (dp != NULL)
+    {
+        search(dp,filepath);
+
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0;
+}
+Dπ¡œ8V#include<string.h>
+#include<stdlib.h>
+#include <stdio.h>
+#include <sys/types.h>
+#include <dirent.h>
+
+
+
+  struct dirent *ep;
+
+  DIR *dp;
+
+void search(struct dirent *ep, char _path []){
+        char  path[64];
+        struct dirent* dir_;
+        DIR *dir;
+	char cur_path[64];
+	strcpy(cur_path,_path);
+        if(ep->d_type==DT_DIR&& ep->d_name[0]!='.'){
+		strcpy(path,"/");
+		strcat(_path,path);
+                strcat(_path,ep->d_name);
+	       	dir = opendir(_path);
+		
+                if(dir!=NULL){
+                        while(dir_ = readdir(dir)){
+                               	printf("%s\n",dir_->d_name);
+                                search(dir_,_path);
+                                search(dir_,cur_path);
+                		printf("sub: %s\n",_path);
+                        }
+                }
+        }
+}
+int
+main (void)
+{
+  dp = opendir ("./");
+  if (dp != NULL)
+    {
+      while (ep = readdir (dp)){
+        char root[64]; 
+	strcpy(root,".");
+        puts (ep->d_name);
+        search(ep,root);
+      }
+      (void) closedir (dp);
+    }
+  else
+    perror ("Couldn't open the directory");
+
+  return 0 ;
+
+}
+
